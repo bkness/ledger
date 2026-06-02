@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Transaction } from "@/app/generated/prisma/client";
-import { updateTransaction } from "@/app/actions";
+import { clearSingleTransaction, updateTransaction } from "@/app/actions";
 
 const currencyFormat = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 
@@ -16,6 +16,8 @@ export function TransactionRow({ transaction }: Props) {
     const [category, setCategory] = useState(transaction.category);
     const [date, setDate] = useState(transaction.date.toISOString().split("T")[0]);
     const [isSaving, setIsSaving] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     function startEdit() {
@@ -31,6 +33,20 @@ export function TransactionRow({ transaction }: Props) {
     function cancelEdit() {
         setError(null);
         setIsEditing(false);
+    }
+
+    async function handleDelete() {
+        setIsDeleting(true);
+        setError(null);
+        try {
+            const result = await clearSingleTransaction(transaction.id);
+            if (result?.error) {
+                setError(result.error);
+                setConfirmDelete(false);
+            }
+        } finally {
+            setIsDeleting(false);
+        }
     }
 
     async function save() {
@@ -54,6 +70,24 @@ export function TransactionRow({ transaction }: Props) {
         }
     }
 
+    if (confirmDelete) {
+        return (
+            <li className="flex items-center justify-between p-3 border rounded">
+                <span className="font-mono text-sm text-gray-500">{"// delete?"}</span>
+                <div className="flex items-center gap-2">
+                    <button type="button" onClick={handleDelete} disabled={isDeleting}
+                        className="text-sm border px-2 py-1 rounded text-red-600 border-red-300 hover:bg-red-50 disabled:opacity-50">
+                        {isDeleting ? "..." : "Yes, delete"}
+                    </button>
+                    <button type="button" onClick={() => setConfirmDelete(false)} disabled={isDeleting}
+                        className="text-sm border px-2 py-1 rounded disabled:opacity-50">
+                        Cancel
+                    </button>
+                </div>
+            </li>
+        );
+    }
+
     if (!isEditing) {
         return (
             <li className="flex items-center justify-between p-3 border rounded">
@@ -68,9 +102,12 @@ export function TransactionRow({ transaction }: Props) {
                         "text-red-600"}`}>
                         {transaction.type === "INCOME" ? "+" : "-"}{currencyFormat.format(transaction.amount)}
                     </span>
-                    <button type="button" onClick={startEdit} aria-label="Edit" className="text-gray-500
-  hover:text-black">
+                    {error && <span className="text-red-500 text-xs">{error}</span>}
+                    <button type="button" onClick={startEdit} aria-label="Edit" className="text-gray-500 hover:text-black">
                         ✎
+                    </button>
+                    <button type="button" onClick={() => { setError(null); setConfirmDelete(true); }} aria-label="Delete" className="text-gray-500 hover:text-red-600">
+                        🗑
                     </button>
                 </div>
             </li>

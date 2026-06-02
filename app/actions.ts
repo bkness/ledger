@@ -49,6 +49,39 @@ export async function createTransaction(
     }
 }
 
+export async function clearSingleTransaction(id: number) {
+    const session = await auth();
+    if (!session?.user?.id) return { error: "Not authenticated" };
+
+    try {
+        const result = await prisma.transaction.deleteMany({
+            where: { id, userId: session.user.id },
+        });
+        if (result.count === 0) return { error: "Transaction not found" };
+        updateTag(`transactions-${session.user.id}`);
+        return { success: true };
+    } catch (err) {
+        console.error("Failed to delete transaction:", err);
+        return { error: "Failed to delete transaction" };
+    }
+}
+
+export async function clearAllTransactions() {
+    const session = await auth();
+    if (!session?.user?.id) return { error: "Not authenticated" };
+
+    try {
+        const result = await prisma.transaction.deleteMany({
+            where: { userId: session.user.id },
+        });
+        updateTag(`transactions-${session.user.id}`);
+        return { success: true, count: result.count };
+    } catch (err) {
+        console.error("Failed to clear transactions:", err);
+        return { error: "Failed to clear transactions" };
+    }
+}
+
 export async function updateTransaction(
     id: number,
     title: string,

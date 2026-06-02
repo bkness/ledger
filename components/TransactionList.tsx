@@ -1,8 +1,7 @@
 import type { Transaction } from "@/app/generated/prisma/client";
+import { TransactionRow } from "./TransactionRow";
 
 type Props = { transactions: Transaction[] };
-
-const currencyFormat = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 
 export function TransactionList({ transactions }: Props) {
     if (transactions.length === 0) {
@@ -17,17 +16,7 @@ export function TransactionList({ transactions }: Props) {
     return (
         <ul className="flex flex-col gap-1">
             {transactions.map(t => (
-                <li key={t.id} className="flex items-center justify-between p-3 border rounded">
-                    <div className="flex flex-col">
-                        <span className="font-medium">{t.title}</span>
-                        <span className="text-xs text-gray-500">
-                            {t.category} · {new Date(t.date).toLocaleDateString()}
-                        </span>
-                    </div>
-                    <span className={`font-mono ${t.type === "INCOME" ? "text-green-600" : "text-red-600"}`}>
-                        {t.type === "INCOME" ? "+" : "-"}{currencyFormat.format(t.amount)}
-                    </span>
-                </li>
+                <TransactionRow key={t.id} transaction={t} />
             ))}
         </ul>
     );

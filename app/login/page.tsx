@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { register } from "@/lib/auth-actions";
+import { Field } from "@/components/Field";
 
 type Mode = "login" | "register";
 
@@ -53,69 +54,78 @@ export default function LoginPage() {
         router.push("/");
     }
 
+    function toggleMode() {
+        setMode(mode === "login" ? "register" : "login");
+        setError(null);
+    }
+
     return (
-        <main className="flex min-h-screen items-center justify-center p-6">
-            <form onSubmit={handleSubmit} className="w-full max-w-sm flex flex-col gap-3">
-                <h1 className="text-2xl font-bold mb-2">{mode === "login" ? "Sign in" : "Create account"}</h1>
+        <main className="login-page">
+            <div className="login-card">
+                <div className="brand">
+                    <div className="brand-name">Ledger</div>
+                    <div className="brand-sub">Track your budget</div>
+                </div>
 
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="border p-2 rounded"
-                />
+                <form onSubmit={handleSubmit}>
+                    <Field label="Email">
+                        <input
+                            type="email"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                            required
+                            autoComplete="email"
+                        />
+                    </Field>
 
-                {mode === "register" && (
-                    <input
-                        type="text"
-                        placeholder="Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                        className="border p-2 rounded"
-                    />
-                )}
+                    {mode === "register" && (
+                        <Field label="Name">
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                                required
+                                autoComplete="name"
+                            />
+                        </Field>
+                    )}
 
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="border p-2 rounded"
-                />
+                    <Field label="Password">
+                        <input
+                            type="password"
+                            value={password}
+                            onChange={e => setPassword(e.target.value)}
+                            required
+                            autoComplete={mode === "login" ? "current-password" : "new-password"}
+                        />
+                    </Field>
 
-                {mode === "register" && (
-                    <input
-                        type="password"
-                        placeholder="Confirm password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                        className="border p-2 rounded"
-                    />
-                )}
+                    {mode === "register" && (
+                        <Field label="Confirm password">
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={e => setConfirmPassword(e.target.value)}
+                                required
+                                autoComplete="new-password"
+                            />
+                        </Field>
+                    )}
 
-                {error && <p className="text-red-500 text-sm">{error}</p>}
+                    {error && <p className="login-error">{error}</p>}
 
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="bg-black text-white p-2 rounded disabled:opacity-50"
-                >
-                    {loading ? "Loading..." : mode === "login" ? "Sign in" : "Create account"}
-                </button>
+                    <button type="submit" disabled={loading} className="btn-primary">
+                        {loading ? "Loading..." : mode === "login" ? "Sign in" : "Create account"}
+                    </button>
+                </form>
 
-                <button
-                    type="button"
-                    onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(null); }}
-                    className="text-sm text-gray-600 underline"
-                >
-                    {mode === "login" ? "Need an account? Register" : "Have an account? Sign in"}
-                </button>
-            </form>
+                <div className="login-footer">
+                    {mode === "login" ? "Need an account?" : "Have an account?"}{" "}
+                    <button type="button" onClick={toggleMode}>
+                        {mode === "login" ? "Register" : "Sign in"}
+                    </button>
+                </div>
+            </div>
         </main>
-    )
+    );
 }

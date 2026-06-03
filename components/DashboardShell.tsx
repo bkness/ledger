@@ -6,6 +6,7 @@ import { TransactionForm } from "@/components/TransactionForm";
 import { TransactionList } from "@/components/TransactionList";
 import { SummaryCards } from "@/components/SummaryCards";
 import { type Filter, FilterPills } from "@/components/FilterPills";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 type Props = {
     transactions: Transaction[];
@@ -27,6 +28,7 @@ export function DashboardShell({ transactions, userEmail, signOutAction }: Props
                 <h1 className="text-2xl font-bold">Ledger</h1>
                 <div className="flex items-center gap-3">
                     <span className="text-sm text-gray-600">{userEmail}</span>
+                    <ThemeSwitcher />
                     <form action={signOutAction}>
                         <button type="submit" className="border px-3 py-1 rounded text-sm">Sign out</button>
                     </form>

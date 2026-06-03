@@ -4,6 +4,7 @@ import { auth, signOut } from "@/auth";
 import { getTransactions } from "@/lib/transactions";
 import { TransactionList } from "@/components/TransactionList";
 import { TransactionForm } from "@/components/TransactionForm";
+import { SummaryCards } from "@/components/SummaryCards";
 
 export default function Home() {
   return (
@@ -35,6 +36,7 @@ async function Dashboard() {
           </form>
         </div>
       </header>
+      <SummaryCards filteredTransactions={transactions} />
       <TransactionForm />
       <section>
         <h2 className="text-sm font-medium mb-3 text-gray-600">{"// TRANSACTIONS"}</h2>

@@ -453,3 +453,138 @@
     font-weight: 500;
     color: var(--text-muted);
   }
+
+  .field {
+    margin-bottom: 12px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0 12px;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .field input::placeholder {
+    color: var(--text-dim);
+  }
+
+  .field input:focus,
+  .field select:focus {
+    border-color: var(--border-2);
+    box-shadow: 0 0 0 3px rgba(24, 24, 27, 0.06);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 20px 20px 12px;
+  }
+
+  .form-grid .field {
+    margin-bottom: 0;
+  }
+
+  .form-field-full {
+    grid-column: 1 / -1;
+  }
+
+  .field-select-wrap {
+    position: relative;
+  }
+
+  .field-select-wrap::after {
+    content: '';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--text-dim);
+    pointer-events: none;
+  }
+
+  .field-select-wrap select {
+    padding-right: 32px;
+    cursor: pointer;
+    appearance: none;
+  }
+
+  .form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px 20px;
+    gap: 10px;
+  }
+
+  .btn-secondary {
+    height: 38px;
+    padding: 0 16px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+
+  .btn-secondary:hover {
+    background: var(--surface-2);
+  }
+
+  .btn-add {
+    height: 38px;
+    padding: 0 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: -0.1px;
+    transition: opacity 0.15s;
+  }
+
+  .btn-add:hover {
+    opacity: 0.88;
+  }
+
+  .btn-add:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-add-icon {
+    font-size: 16px;
+    line-height: 1;
+    margin-top: -1px;
+  }

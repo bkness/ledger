@@ -19,6 +19,7 @@ export function ThemeSwitcher() {
     useEffect(() => {
         const saved = localStorage.getItem(STORAGE_KEY);
         const savedIndex = THEMES.findIndex(t => t.name === saved);
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (savedIndex !== -1) setIndex(savedIndex);
     }, []);
 

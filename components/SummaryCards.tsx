@@ -14,28 +14,11 @@ export function SummaryCards({ filteredTransactions }: Props) {
     const expense = expenseTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
     const balance = income - expense;
 
-    const balanceClass = balance >= 0 ? "text-green-600" : "text-red-600";
-
     return (
-        <div className="grid grid-cols-3 gap-3">
-            <StatCard
-                label="Income"
-                value={currencyFormat.format(income)}
-                count={incomeTransactions.length}
-                valueClass="text-green-600"
-            />
-            <StatCard
-                label="Expense"
-                value={currencyFormat.format(expense)}
-                count={expenseTransactions.length}
-                valueClass="text-red-600"
-            />
-            <StatCard
-                label="Balance"
-                value={currencyFormat.format(balance)}
-                count={filteredTransactions.length}
-                valueClass={balanceClass}
-            />
+        <div className="stats-grid">
+            <StatCard label="Income" value={currencyFormat.format(income)} count={incomeTransactions.length} variant="income" />
+            <StatCard label="Expense" value={currencyFormat.format(expense)} count={expenseTransactions.length} variant="expense" />
+            <StatCard label="Balance" value={currencyFormat.format(balance)} count={filteredTransactions.length} variant={balance >= 0 ? "income" : "expense"} highlight />
         </div>
     );
 }
@@ -44,17 +27,20 @@ type StatCardProps = {
     label: string;
     value: string;
     count: number;
-    valueClass: string;
+    variant?: "income" | "expense";
+    highlight?: boolean;
 };
 
-function StatCard({ label, value, count, valueClass }: StatCardProps) {
+function StatCard({ label, value, count, variant, highlight }: StatCardProps) {
+    const cardClass = highlight ? "stat-card highlight" : "stat-card";
+    const valueClass = variant ? `stat-value ${variant}` : "stat-value";
     return (
-        <div className="border rounded p-3 flex flex-col gap-1">
-            <span className="text-xs text-gray-500 uppercase tracking-wide font-semibold">{label}</span>
-            <span className={`font-mono text-xl font-medium ${valueClass}`}>{value}</span>
-            <span className="text-xs text-gray-400">
+        <div className={cardClass}>
+            <div className="stat-label">{label}</div>
+            <div className={valueClass}>{value}</div>
+            <div className="stat-delta">
                 {count === 1 ? "1 transaction" : `${count} transactions`}
-            </span>
+            </div>
         </div>
     );
 }

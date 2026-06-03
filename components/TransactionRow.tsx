@@ -3,12 +3,14 @@
 import { useState } from "react";
 import type { Transaction } from "@/app/generated/prisma/client";
 import { clearSingleTransaction, updateTransaction } from "@/app/actions";
+import { useToast } from "@/lib/useToast";
 
 const currencyFormat = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
 
 type Props = { transaction: Transaction };
 
 export function TransactionRow({ transaction }: Props) {
+    const toast = useToast();
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState(transaction.title);
     const [amount, setAmount] = useState(transaction.amount.toString());
@@ -18,7 +20,6 @@ export function TransactionRow({ transaction }: Props) {
     const [isSaving, setIsSaving] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
 
     function startEdit() {
         setTitle(transaction.title);
@@ -26,24 +27,26 @@ export function TransactionRow({ transaction }: Props) {
         setType(transaction.type);
         setCategory(transaction.category);
         setDate(transaction.date.toISOString().split("T")[0]);
-        setError(null);
         setIsEditing(true);
     }
 
     function cancelEdit() {
-        setError(null);
         setIsEditing(false);
     }
 
     async function handleDelete() {
         setIsDeleting(true);
-        setError(null);
         try {
             const result = await clearSingleTransaction(transaction.id);
-            if (result?.error) {
-                setError(result.error);
-                setConfirmDelete(false);
+            if (result.error) {
+                toast.error(result.error);
+                return;
             }
+
+            toast.success("Transaction deleted");
+            setConfirmDelete(false);
+        } catch {
+            toast.error("Something went wrong");
         } finally {
             setIsDeleting(false);
         }
@@ -52,18 +55,18 @@ export function TransactionRow({ transaction }: Props) {
     async function save() {
         const numericAmount = parseFloat(amount);
         if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
-            setError("Amount must be greater than 0");
+            toast.error("Amount must be greater than 0");
             return;
         }
         setIsSaving(true);
-        setError(null);
         try {
             const result = await updateTransaction(transaction.id, title, numericAmount, type, category,
                 date);
             if (result?.error) {
-                setError(result.error);
+                toast.error(result.error);
                 return;
             }
+            toast.success("Transaction updated");
             setIsEditing(false);
         } finally {
             setIsSaving(false);
@@ -102,11 +105,10 @@ export function TransactionRow({ transaction }: Props) {
                         "text-red-600"}`}>
                         {transaction.type === "INCOME" ? "+" : "-"}{currencyFormat.format(transaction.amount)}
                     </span>
-                    {error && <span className="text-red-500 text-xs">{error}</span>}
                     <button type="button" onClick={startEdit} aria-label="Edit" className="text-gray-500 hover:text-black">
                         ✎
                     </button>
-                    <button type="button" onClick={() => { setError(null); setConfirmDelete(true); }} aria-label="Delete" className="text-gray-500 hover:text-red-600">
+                    <button type="button" onClick={() => { setConfirmDelete(true); }} aria-label="Delete" className="text-gray-500 hover:text-red-600">
                         🗑
                     </button>
                 </div>
@@ -131,7 +133,6 @@ export function TransactionRow({ transaction }: Props) {
                 className="border p-1 rounded text-sm" />
             <input type="date" value={date} onChange={e => setDate(e.target.value)} className="border p-1
   rounded text-sm" />
-            {error && <p className="text-red-500 text-xs">{error}</p>}
             <div className="flex gap-2 justify-end">
                 <button type="button" onClick={save} disabled={isSaving} className="text-sm border px-2 py-1
   rounded disabled:opacity-50">

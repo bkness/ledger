@@ -60,3 +60,26 @@
     background: var(--bg);
     color: var(--text);
   }
+
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    padding: 12px 20px; 
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    color: #fff;
+    box-shadow: var(--shadow);
+    z-index: 1000;
+    animation: toastIn 0.3s ease-out;
+  }
+
+  .toast-success { background: var(--income); }
+  .toast-error   { background: var(--expense); }
+  .toast-info    { background: var(--accent); }
+
+  @keyframes toastIn {
+    from { transform: translateY(10px); opacity: 0;}
+    to { transform: translateY(0); opacity: 1;}
+  }

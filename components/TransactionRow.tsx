@@ -21,6 +21,8 @@ export function TransactionRow({ transaction }: Props) {
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
+    const variant = transaction.type === "INCOME" ? "income" : "expense";
+
     function startEdit() {
         setTitle(transaction.title);
         setAmount(transaction.amount.toString());
@@ -42,7 +44,6 @@ export function TransactionRow({ transaction }: Props) {
                 toast.error(result.error);
                 return;
             }
-
             toast.success("Transaction deleted");
             setConfirmDelete(false);
         } catch {
@@ -60,8 +61,7 @@ export function TransactionRow({ transaction }: Props) {
         }
         setIsSaving(true);
         try {
-            const result = await updateTransaction(transaction.id, title, numericAmount, type, category,
-                date);
+            const result = await updateTransaction(transaction.id, title, numericAmount, type, category, date);
             if (result?.error) {
                 toast.error(result.error);
                 return;
@@ -75,15 +75,35 @@ export function TransactionRow({ transaction }: Props) {
 
     if (confirmDelete) {
         return (
-            <li className="flex items-center justify-between p-3 border rounded">
-                <span className="font-mono text-sm text-gray-500">{"// delete?"}</span>
-                <div className="flex items-center gap-2">
-                    <button type="button" onClick={handleDelete} disabled={isDeleting}
-                        className="text-sm border px-2 py-1 rounded text-red-600 border-red-300 hover:bg-red-50 disabled:opacity-50">
+            <li className="tx-row" style={{ gridTemplateColumns: "1fr auto" }}>
+                <div
+                    className="tx-date"
+                    style={{ color: "var(--text-dim)" }}
+                >
+                    {"// delete?"}
+                </div>
+                <div className="tx-actions">
+                    <button
+                        type="button"
+                        onClick={handleDelete}
+                        disabled={isDeleting}
+                        className="save-btn"
+                        style={{
+                            width: "auto",
+                            padding: "0 12px",
+                            borderColor: "var(--expense)",
+                            color: "var(--expense)",
+                        }}
+                    >
                         {isDeleting ? "..." : "Yes, delete"}
                     </button>
-                    <button type="button" onClick={() => setConfirmDelete(false)} disabled={isDeleting}
-                        className="text-sm border px-2 py-1 rounded disabled:opacity-50">
+                    <button
+                        type="button"
+                        onClick={() => setConfirmDelete(false)}
+                        disabled={isDeleting}
+                        className="cancel-btn"
+                        style={{ width: "auto", padding: "0 12px" }}
+                    >
                         Cancel
                     </button>
                 </div>
@@ -93,22 +113,35 @@ export function TransactionRow({ transaction }: Props) {
 
     if (!isEditing) {
         return (
-            <li className="flex items-center justify-between p-3 border rounded">
-                <div className="flex flex-col">
-                    <span className="font-medium">{transaction.title}</span>
-                    <span className="text-xs text-gray-500">
-                        {transaction.category} · {new Date(transaction.date).toLocaleDateString()}
-                    </span>
+            <li className="tx-row">
+                <div>
+                    <div className="tx-title">{transaction.title}</div>
+                    <div className="tx-cat">{transaction.category}</div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <span className={`font-mono ${transaction.type === "INCOME" ? "text-green-600" :
-                        "text-red-600"}`}>
-                        {transaction.type === "INCOME" ? "+" : "-"}{currencyFormat.format(transaction.amount)}
-                    </span>
-                    <button type="button" onClick={startEdit} aria-label="Edit" className="text-gray-500 hover:text-black">
+                <div className="tx-date">
+                    {new Date(transaction.date).toLocaleDateString()}
+                </div>
+                <div>
+                    <span className={`tx-badge ${variant}`}>{transaction.type}</span>
+                </div>
+                <div className={`tx-amount ${variant}`}>
+                    {transaction.type === "INCOME" ? "+" : "-"}{currencyFormat.format(transaction.amount)}
+                </div>
+                <div className="tx-actions">
+                    <button
+                        type="button"
+                        onClick={startEdit}
+                        aria-label="Edit"
+                        className="edit-btn"
+                    >
                         ✎
                     </button>
-                    <button type="button" onClick={() => { setConfirmDelete(true); }} aria-label="Delete" className="text-gray-500 hover:text-red-600">
+                    <button
+                        type="button"
+                        onClick={() => setConfirmDelete(true)}
+                        aria-label="Delete"
+                        className="delete-btn"
+                    >
                         🗑
                     </button>
                 </div>
@@ -117,29 +150,61 @@ export function TransactionRow({ transaction }: Props) {
     }
 
     return (
-        <li className="flex flex-col gap-2 p-3 border rounded">
-            <input type="text" value={title} onChange={e => setTitle(e.target.value)} autoFocus
-                className="border p-1 rounded text-sm" />
-            <div className="flex gap-2">
-                <input type="number" step="0.01" min="0.01" value={amount} onChange={e =>
-                    setAmount(e.target.value)} className="border p-1 rounded text-sm flex-1" />
-                <select value={type} onChange={e => setType(e.target.value as "INCOME" | "EXPENSE")}
-                    className="border p-1 rounded text-sm">
-                    <option value="EXPENSE">Expense</option>
-                    <option value="INCOME">Income</option>
-                </select>
+        <li className="tx-row">
+            <div className="tx-edit-fields">
+                <input
+                    type="text"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                    autoFocus
+                    className="edit-field"
+                    placeholder="Title"
+                />
+                <input
+                    type="text"
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                    className="edit-field"
+                    placeholder="Category"
+                />
             </div>
-            <input type="text" value={category} onChange={e => setCategory(e.target.value)}
-                className="border p-1 rounded text-sm" />
-            <input type="date" value={date} onChange={e => setDate(e.target.value)} className="border p-1
-  rounded text-sm" />
-            <div className="flex gap-2 justify-end">
-                <button type="button" onClick={save} disabled={isSaving} className="text-sm border px-2 py-1
-  rounded disabled:opacity-50">
+            <input
+                type="date"
+                value={date}
+                onChange={e => setDate(e.target.value)}
+                className="edit-field"
+            />
+            <select
+                value={type}
+                onChange={e => setType(e.target.value as "INCOME" | "EXPENSE")}
+                className="edit-field edit-type"
+            >
+                <option value="EXPENSE">Expense</option>
+                <option value="INCOME">Income</option>
+            </select>
+            <input
+                type="number"
+                step="0.01"
+                min="0.01"
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                className="edit-field edit-amount"
+            />
+            <div className="tx-actions">
+                <button
+                    type="button"
+                    onClick={save}
+                    disabled={isSaving}
+                    className="save-btn"
+                >
                     {isSaving ? "..." : "✓"}
                 </button>
-                <button type="button" onClick={cancelEdit} disabled={isSaving} className="text-sm border px-2
-  py-1 rounded disabled:opacity-50">
+                <button
+                    type="button"
+                    onClick={cancelEdit}
+                    disabled={isSaving}
+                    className="cancel-btn"
+                >
                     ✗
                 </button>
             </div>

@@ -30,15 +30,13 @@ export function DashboardShell({ transactions, userEmail, signOutAction }: Props
                 signOutAction={signOutAction}
                 themeSwitcher={<ThemeSwitcher />}
             />
-            <main className="max-w-2xl mx-auto p-6 flex flex-col gap-6 w-full">
+            <main className="max-w-4xl mx-auto p-6 flex flex-col gap-6 w-full">
                 <SummaryCards filteredTransactions={filteredTransactions} />
                 <TransactionForm />
-
-                <section>
-                    <h2 className="text-sm font-medium mb-3 text-gray-600">{"// TRANSACTIONS"}</h2>
-                    <FilterPills value={filter} onChange={setFilter} />
-                    <TransactionList transactions={filteredTransactions} />
-                </section>
+                <TransactionList
+                    transactions={filteredTransactions}
+                    filterPills={<FilterPills value={filter} onChange={setFilter} />}
+                />
             </main>
         </>
     );

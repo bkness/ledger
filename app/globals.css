@@ -206,3 +206,250 @@
     color: var(--text-dim);
     margin-top: 6px;
   }
+
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.1px;
+    flex: 1;
+  }
+
+  .section-count {
+    font-size: 12px;
+    color: var(--text-dim);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 2px 10px;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 4px;
+  }
+
+  .filter-btn {
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 99px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: background 0.12s, color 0.12s;
+  }
+
+  .filter-btn:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+
+  .filter-btn.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  .filter-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  .tx-row {
+    display: grid;
+    grid-template-columns: 1fr 130px 110px 120px 68px;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  .tx-row:last-child { border-bottom: none; }
+  .tx-row:hover:not(.tx-header) { background: var(--surface-2); }
+
+  .tx-header {
+    background: var(--surface-2);
+    padding: 8px 20px;
+  }
+
+  .tx-header span {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .tx-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .tx-cat {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .tx-date {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-geist-mono);
+  }
+
+  .tx-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 99px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .tx-badge.income  { background: var(--income-bg);  color: var(--income); }
+  .tx-badge.expense { background: var(--expense-bg); color: var(--expense); }
+
+  .tx-amount {
+    font-family: var(--font-geist-mono);
+    font-size: 13px;
+    font-weight: 500;
+    text-align: right;
+  }
+
+  .tx-amount.income  { color: var(--income); }
+  .tx-amount.expense { color: var(--expense); }
+
+  .tx-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+
+  .edit-btn, .delete-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: all 0.12s;
+  }
+
+  .edit-btn:hover {
+    background: var(--surface-2);
+    color: var(--text);
+    border-color: var(--border-2);
+  }
+
+  .delete-btn:hover {
+    background: var(--expense-bg);
+    border-color: #FCA5A5;
+    color: var(--expense);
+  }
+
+  .save-btn, .cancel-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+
+  .save-btn {
+    background: none;
+    border: 1px solid var(--income);
+    color: var(--income);
+  }
+  .save-btn:hover { background: var(--income-bg); }
+
+  .cancel-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+  .cancel-btn:hover { background: var(--surface-2); }
+
+  .tx-edit-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .edit-field {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    padding: 2px 4px;
+    font-size: 13px;
+    color: var(--text);
+    font-family: inherit;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .edit-field:focus {
+    outline: none;
+    border-bottom-color: var(--border-2);
+  }
+
+  .edit-type {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    cursor: pointer;
+    appearance: none;
+  }
+
+  .edit-amount { text-align: right; }
+
+  .tx-empty {
+    padding: 48px 20px;
+    text-align: center;
+  }
+
+  .tx-empty-icon {
+    font-size: 20px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .tx-empty-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }

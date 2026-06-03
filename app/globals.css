@@ -83,3 +83,60 @@
     from { transform: translateY(10px); opacity: 0;}
     to { transform: translateY(0); opacity: 1;}
   }
+
+  .navbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    height: 65px;
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+  }
+
+  .nav-brand {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--text);
+  }
+
+  .nav-divider {
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(to top, transparent, var(--text));
+    margin: 0 20px;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  .nav-user {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .nav-user span {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .btn-ghost {
+    height: 32px;
+    padding: 0 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+
+  .btn-ghost:hover {
+    opacity: 0.9;
+  }

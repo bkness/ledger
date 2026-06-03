@@ -30,7 +30,7 @@ export function DashboardShell({ transactions, userEmail, signOutAction }: Props
                 signOutAction={signOutAction}
                 themeSwitcher={<ThemeSwitcher />}
             />
-            <main className="max-w-4xl mx-auto p-6 flex flex-col gap-6 w-full">
+            <main className="max-w-4xl mx-auto p-4 sm:p-6 flex flex-col gap-4 sm:gap-6 w-full">
                 <SummaryCards filteredTransactions={filteredTransactions} />
                 <TransactionForm />
                 <TransactionList

@@ -677,3 +677,89 @@
     font-size: 13px;
     margin-top: 4px;
   }
+
+  /* ── Mobile (≤640px) ─────────────────────────────────────── */
+  @media (max-width: 640px) {
+
+    /* Navbar: tighten padding, drop divider, hide user email */
+    .navbar {
+      padding: 0 16px;
+    }
+    .nav-divider {
+      display: none;
+    }
+    .nav-user {
+      display: none;
+    }
+    .nav-right {
+      gap: 8px;
+    }
+
+    /* Stats: stack vertically */
+    .stats-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    /* Section header: allow filter-bar to wrap below title + count */
+    .section-header {
+      flex-wrap: wrap;
+      padding: 14px 16px;
+    }
+    .section-title {
+      flex: 1 0 100%;
+      order: 0;
+    }
+    .section-count {
+      order: 1;
+    }
+    .filter-bar {
+      order: 2;
+      margin-left: auto;
+    }
+
+    /* Transaction rows: full vertical stack per row, column header hidden */
+    .tx-row {
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding: 14px 16px;
+    }
+    .tx-header {
+      display: none;
+    }
+    .tx-amount {
+      text-align: left;
+    }
+    .tx-actions {
+      justify-content: flex-start;
+      margin-top: 4px;
+    }
+
+    /* Form: single column */
+    .form-grid {
+      grid-template-columns: 1fr;
+      padding: 16px 16px 8px;
+    }
+    .form-field-full {
+      grid-column: 1;
+    }
+    .form-actions {
+      padding: 0 16px 16px;
+    }
+
+    /* iOS Safari auto-zooms inputs with font-size < 16px — bump on mobile */
+    .field input,
+    .field select,
+    .edit-field {
+      font-size: 16px;
+    }
+    .field input,
+    .field select {
+      height: 44px;
+    }
+
+    /* Login card: reduce padding on small screens */
+    .login-card {
+      padding: 32px 24px;
+    }
+  }

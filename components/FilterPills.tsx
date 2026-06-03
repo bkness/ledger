@@ -35,7 +35,7 @@ export function FilterPills({ value, onChange }: Props) {
         <div
             role="radiogroup"
             aria-label="Filter transactions"
-            className="inline-flex rounded bg-gray-200 p-1"
+            className="filter-bar"
             onKeyDown={handleKeyDown}
         >
             {FILTERS.map((filter, index) => (
@@ -46,15 +46,12 @@ export function FilterPills({ value, onChange }: Props) {
                     role="radio"
                     aria-checked={value === filter.value}
                     onClick={() => onChange(filter.value)}
-                    className={`px-3 py-1 rounded text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                        value === filter.value ? "bg-blue-600 text-white" : "text-gray-700 hover:bg-gray-300"
-                    }`}
+                    className={`filter-btn ${value === filter.value ? "active" : ""}`}
                     tabIndex={value === filter.value ? 0 : -1}
                 >
                     {filter.label}
                 </button>
-            )
-            )}
+            ))}
         </div>
     );
 }

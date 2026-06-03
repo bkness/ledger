@@ -1,23 +1,42 @@
+import type { ReactNode } from "react";
 import type { Transaction } from "@/app/generated/prisma/client";
 import { TransactionRow } from "./TransactionRow";
 
-type Props = { transactions: Transaction[] };
+type Props = {
+    transactions: Transaction[];
+    filterPills?: ReactNode;
+};
 
-export function TransactionList({ transactions }: Props) {
-    if (transactions.length === 0) {
-        return (
-            <div className="flex flex-col items-center justify-center py-12 gap-2">
-                <p className="text-sm text-gray-500 font-mono">{"// no transactions yet"}</p>
-                <p className="text-xs text-gray-400">add your first below</p>
-            </div>
-        );
-    }
-
+export function TransactionList({ transactions, filterPills }: Props) {
     return (
-        <ul className="flex flex-col gap-1">
-            {transactions.map(t => (
-                <TransactionRow key={t.id} transaction={t} />
-            ))}
-        </ul>
+        <div className="section">
+            <div className="section-header">
+                <div className="section-title">{"// TRANSACTIONS"}</div>
+                <div className="section-count">{transactions.length}</div>
+                {filterPills}
+            </div>
+
+            {transactions.length === 0 ? (
+                <div className="tx-empty">
+                    <div className="tx-empty-icon">{" "}</div>
+                    <div className="tx-empty-text">{"// no transactions yet"}</div>
+                </div>
+            ) : (
+                <>
+                    <div className="tx-row tx-header">
+                        <span>Description</span>
+                        <span>Date</span>
+                        <span>Type</span>
+                        <span style={{ textAlign: "right" }}>Amount</span>
+                        <span></span>
+                    </div>
+                    <ul>
+                        {transactions.map(t => (
+                            <TransactionRow key={t.id} transaction={t} />
+                        ))}
+                    </ul>
+                </>
+            )}
+        </div>
     );
 }

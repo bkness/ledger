@@ -1,36 +1,173 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ledger
 
-## Getting Started
+A personal budget tracker built as a fullstack learning project. Track income and expenses, filter by type, and switch between 5 themes — all persisted per-user with a real authenticated session.
 
-First, run the development server:
+---
+
+## Features
+
+### Transactions
+- **Full CRUD** — create via form, inline edit on any row, delete with confirm guard
+- **Income / Expense / Balance summary cards** — react live to the active filter
+- **Filter pills** — All / Income / Expense with keyboard arrow navigation (`←` / `→`), accessible `role="radiogroup"`
+- **Toast notifications** — action feedback for create, update, and delete
+
+### Themes
+- 5 themes: `Light` · `Blue` · `Forest` · `Amber` · `Frost`
+- Cycled via a single button in the navbar
+- Persisted to `localStorage` — survives refresh and sign-out
+
+### Authentication
+- NextAuth.js v5 credentials provider with bcrypt hashing
+- Stateless JWT sessions, edge-safe
+- Per-user isolation — every transaction query and mutation is `userId`-scoped
+
+### Responsive
+- Mobile breakpoints on all dashboard components
+- Cards, form, and transaction list all reflow at ≤640px
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16.2.7 (App Router, Turbopack) |
+| Language | TypeScript |
+| Styling | Tailwind CSS 4 |
+| Auth | NextAuth.js v5 (beta) — credentials + JWT |
+| Database | PostgreSQL (Supabase in prod, Docker locally) |
+| ORM | Prisma 7 (driver adapter pattern, `PrismaPg`) |
+| Runtime | React 19 / Server Actions |
+
+---
+
+## Architecture highlights
+
+- **Prisma 7 driver adapter** — uses `PrismaPg` from `@prisma/adapter-pg` instead of the legacy datasource URL, with the generated client output redirected to `app/generated/prisma`.
+- **Lifted filter state** — `filter` lives in `DashboardShell` alongside the server-fetched transactions list. `filteredTransactions` is a derived slice passed down as a prop — no extra fetches on filter change.
+- **Server actions as props** — `signOutAction` is defined as an inline server action in `page.tsx` and passed into `DashboardShell`, keeping the client component auth-agnostic.
+
+---
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 18+
+- Docker + Docker Compose (for local Postgres)
+
+### 1. Clone and install
+
+```bash
+git clone https://github.com/bkness/ledger.git
+cd ledger
+npm install
+```
+
+### 2. Set up environment
+
+```bash
+cp .env.example .env
+```
+
+Required variables:
+
+```bash
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+POSTGRES_DB=
+DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB
+AUTH_SECRET=          # openssl rand -base64 32
+```
+
+### 3. Start the database
+
+```bash
+docker compose up -d
+```
+
+### 4. Run migrations
+
+```bash
+npx prisma migrate deploy
+```
+
+### 5. Start the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000), register an account, and start tracking.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
+```
+ledger/
+├── app/
+│   ├── actions.ts              # Server Actions — create, update, delete (userId-scoped)
+│   ├── api/auth/[...nextauth]/ # NextAuth route handler
+│   ├── login/page.tsx          # Login / register page
+│   ├── page.tsx                # Dashboard (auth-gated, server component)
+│   ├── layout.tsx              # Root layout + SessionProvider
+│   └── generated/prisma/       # Prisma 7 client output
+├── components/
+│   ├── DashboardShell.tsx      # Filter state, composes all dashboard sections
+│   ├── SummaryCards.tsx        # Income / Expense / Balance cards
+│   ├── TransactionForm.tsx     # Create form
+│   ├── TransactionList.tsx     # List wrapper + filter pills slot
+│   ├── TransactionRow.tsx      # Row with inline edit + confirm-delete
+│   ├── FilterPills.tsx         # All / Income / Expense, keyboard-accessible
+│   ├── ThemeSwitcher.tsx       # Cycle 5 themes, persist to localStorage
+│   ├── Navbar.tsx              # Top nav with theme switcher + sign out
+│   ├── Field.tsx               # Reusable labeled input
+│   ├── FieldSelect.tsx         # Reusable labeled select
+│   └── Toast.tsx               # Toast notification renderer
+├── lib/
+│   ├── auth-actions.ts         # register() server action (bcrypt)
+│   ├── db.ts                   # Prisma 7 singleton (globalThis + PrismaPg adapter)
+│   ├── transactions.ts         # getTransactions() — per-userId query
+│   └── useToast.ts             # Toast state hook
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+├── auth.config.ts              # Edge-safe NextAuth config
+├── auth.ts                     # Full NextAuth config (Node.js, Prisma, bcrypt)
+└── prisma.config.ts            # Prisma 7 DB config
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Database schema
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```prisma
+model User {
+  id           String        @id @default(uuid())
+  name         String        @unique
+  email        String        @unique
+  passwordHash String?
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
 
-## Deploy on Vercel
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  title     String
+  amount    Float
+  type      Type     // INCOME | EXPENSE
+  category  String
+  date      DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built by [bkness](https://github.com/bkness) · devforge ecosystem

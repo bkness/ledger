@@ -19,6 +19,10 @@
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
+  "overrides": {
+    "postcss": "^8.5.14",
+    "@hono/node-server": "^1.19.13"
+  },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",

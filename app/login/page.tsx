@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { register } from "@/lib/auth-actions";
+import { DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/demo";
 import { Field } from "@/components/Field";
 
 type Mode = "login" | "register";
@@ -50,6 +51,24 @@ export default function LoginPage() {
             return;
         }
 
+        setLoading(false);
+        router.push("/");
+    }
+
+    // One-click sign-in to the public demo account (sample data, resettable)
+    async function handleDemo() {
+        setError(null);
+        setLoading(true);
+        const result = await signIn("credentials", {
+            email: DEMO_EMAIL,
+            password: DEMO_PASSWORD,
+            redirect: false,
+        });
+        if (result?.error) {
+            setError("Demo account is unavailable right now. Create an account instead.");
+            setLoading(false);
+            return;
+        }
         setLoading(false);
         router.push("/");
     }
@@ -118,6 +137,17 @@ export default function LoginPage() {
                         {loading ? "Loading..." : mode === "login" ? "Sign in" : "Create account"}
                     </button>
                 </form>
+
+                {mode === "login" && (
+                    <div className="login-demo">
+                        <button type="button" onClick={handleDemo} disabled={loading} className="btn-secondary">
+                            Try the demo
+                        </button>
+                        <p className="login-demo-note">
+                            Sample account: {DEMO_EMAIL} / {DEMO_PASSWORD}
+                        </p>
+                    </div>
+                )}
 
                 <div className="login-footer">
                     {mode === "login" ? "Need an account?" : "Have an account?"}{" "}

@@ -2,6 +2,8 @@
 
 A personal budget tracker built as a fullstack learning project. Track income and expenses, filter by type, and switch between 5 themes — all persisted per-user with a real authenticated session.
 
+**Live demo:** [ledger-chi-seven.vercel.app](https://ledger-chi-seven.vercel.app) — click **Register** on the login page to create an account (any email works).
+
 ---
 
 ## Features
@@ -36,7 +38,7 @@ A personal budget tracker built as a fullstack learning project. Track income an
 | Language | TypeScript |
 | Styling | Tailwind CSS 4 |
 | Auth | NextAuth.js v5 (beta) — credentials + JWT |
-| Database | PostgreSQL (Supabase in prod, Docker locally) |
+| Database | PostgreSQL (Neon in prod, Docker locally) |
 | ORM | Prisma 7 (driver adapter pattern, `PrismaPg`) |
 | Runtime | React 19 / Server Actions |
 
